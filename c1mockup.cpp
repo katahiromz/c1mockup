@@ -935,6 +935,7 @@ LRESULT C1_OnImeControl(HWND hWnd, WPARAM wParam, LPARAM lParam)
             ret = pC1->SubType;
             if (wParam == IMC_SETSOFTKBDSUBTYPE)
                 pC1->SubType = lParam;
+            GlobalUnlock(hGlobal);
             break;
         }
         case IMC_SETSOFTKBDDATA:
