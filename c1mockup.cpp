@@ -27,7 +27,7 @@ static BOOL g_bWantSoftKBDMetrics = TRUE;
     #define ImmDestroySoftKeyboard C1_DestroySoftKeyboard
 #endif
 
-// Win: ImmPtInRect
+/* Win: ImmPtInRect */
 static inline BOOL
 Imm32PtInRect(
     _In_ const POINT *ppt,
@@ -52,7 +52,7 @@ Imm32Clamp(
     return x;
 }
 
-// Win: GetAllMonitorSize
+/* Win: GetAllMonitorSize */
 static VOID
 Imm32GetAllMonitorSize(
     _Out_ LPRECT prcWork)
@@ -69,7 +69,7 @@ Imm32GetAllMonitorSize(
     prcWork->bottom = prcWork->top  + GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
-// Win: GetNearestMonitorSize
+/* Win: GetNearestMonitorSize */
 static BOOL
 Imm32GetNearestWorkArea(
     _In_opt_ HWND hwnd,
@@ -106,7 +106,7 @@ typedef struct T1WINDOW
     char unused;
 } T1WINDOW, *PT1WINDOW;
 
-// Win: SKWndProcT1
+/* Win: SKWndProcT1 */
 LRESULT CALLBACK
 T1_WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -164,13 +164,13 @@ typedef struct C1WINDOW
 static POINT gptButtonPos[C1K_MAX];
 static BOOL gfSoftKbdC1Init = FALSE;
 
-// Win: InitSKC1ButtonPos
-void C1_InitButtonPos(void)
+/* Win: InitSKC1ButtonPos */
+static void C1_InitButtonPos(void)
 {
     LONG x = 0, y = 0;
     INT iKey;
 
-    // 1st row
+    /* 1st row */
     for (iKey = C1K_OEM_3; iKey < C1K_Q; ++iKey)
     {
         gptButtonPos[iKey].x = x;
@@ -180,7 +180,7 @@ void C1_InitButtonPos(void)
     gptButtonPos[C1K_BACKSPACE].x = x;
     gptButtonPos[C1K_BACKSPACE].y = y;
 
-    // 2nd row
+    /* 2nd row */
     y = 28;
     gptButtonPos[C1K_TAB].x = 0;
     gptButtonPos[C1K_TAB].y = y;
@@ -192,7 +192,7 @@ void C1_InitButtonPos(void)
         x += 24;
     }
 
-    // 3rd row
+    /* 3rd row */
     y = 56;
     gptButtonPos[C1K_CAPS].x = 0;
     gptButtonPos[C1K_CAPS].y = y;
@@ -206,7 +206,7 @@ void C1_InitButtonPos(void)
     gptButtonPos[C1K_ENTER].x = x;
     gptButtonPos[C1K_ENTER].y = y;
 
-    // 4th row
+    /* 4th row */
     y = 84;
     gptButtonPos[C1K_SHIFT].x = 0;
     gptButtonPos[C1K_SHIFT].y = y;
@@ -218,7 +218,7 @@ void C1_InitButtonPos(void)
         x += 24;
     }
 
-    // 5th row
+    /* 5th row */
     y = 112;
     gptButtonPos[C1K_INSERT].x = 0;
     gptButtonPos[C1K_INSERT].y = y;
@@ -230,8 +230,14 @@ void C1_InitButtonPos(void)
     gptButtonPos[C1K_ESCAPE].y = y;
 }
 
-// Win: SKC1DrawConvexRect
-void C1_DrawConvexRect(HDC hDC, INT x, INT y, INT width, INT height)
+/* Win: SKC1DrawConvexRect */
+static void
+C1_DrawConvexRect(
+    _In_ HDC hDC,
+    _In_ INT x,
+    _In_ INT y,
+    _In_ INT width,
+    _In_ INT height)
 {
     HGDIOBJ hLtGrayBrush = GetStockObject(LTGRAY_BRUSH);
     HGDIOBJ hBlackPen = GetStockObject(BLACK_PEN);
@@ -255,8 +261,11 @@ void C1_DrawConvexRect(HDC hDC, INT x, INT y, INT width, INT height)
     PatBlt(hDC, x + width - 1, y2, -1, 2 - height, PATCOPY);
 }
 
-// Win: SKC1InvertButton
-void C1_InvertButton(HDC hDC, INT iKey)
+/* Win: SKC1InvertButton */
+static void
+C1_InvertButton(
+    _In_ HDC hDC,
+    _In_ INT iKey)
 {
     INT width = 24, height = 28;
 
@@ -290,8 +299,15 @@ void C1_InvertButton(HDC hDC, INT iKey)
            hDC, gptButtonPos[iKey].x, gptButtonPos[iKey].y, DSTINVERT);
 }
 
-// Win: SKC1DrawBitmap
-void C1_DrawBitmap(HDC hdc, INT x, INT y, INT width, INT height, INT nBitmapID)
+/* Win: SKC1DrawBitmap */
+static void
+C1_DrawBitmap(
+    _In_ HDC hdc,
+    _In_ INT x,
+    _In_ INT y,
+    _In_ INT width,
+    _In_ INT height,
+    _In_ INT nBitmapID)
 {
     HBITMAP hBitmap = LoadBitmapW(ghImm32Inst, MAKEINTRESOURCEW(nBitmapID));
     HDC hMemDC = CreateCompatibleDC(hdc);
@@ -301,8 +317,11 @@ void C1_DrawBitmap(HDC hdc, INT x, INT y, INT width, INT height, INT nBitmapID)
     DeleteDC(hMemDC);
 }
 
-// Win: SKC1DrawLabel
-void C1_DrawLabel(HDC hDC, INT nBitmapID)
+/* Win: SKC1DrawLabel */
+static void
+C1_DrawLabel(
+    _In_ HDC hDC,
+    _In_ INT nBitmapID)
 {
     HBITMAP hBitmap;
     HGDIOBJ hbmOld;
@@ -321,8 +340,14 @@ void C1_DrawLabel(HDC hDC, INT nBitmapID)
     DeleteDC(hMemDC);
 }
 
-// Win: InitSKC1Bitmap
-void C1_InitBitmap(HDC hDC, INT x, INT y, INT width, INT height)
+/* Win: InitSKC1Bitmap */
+static void
+C1_InitBitmap(
+    _In_ HDC hDC,
+    _In_ INT x,
+    _In_ INT y,
+    _In_ INT width,
+    _In_ INT height)
 {
     HGDIOBJ hLtGrayBrush = GetStockObject(LTGRAY_BRUSH);
     HGDIOBJ hNullPen = GetStockObject(NULL_PEN);
@@ -367,8 +392,10 @@ void C1_InitBitmap(HDC hDC, INT x, INT y, INT width, INT height)
     C1_DrawBitmap(hDC, gptButtonPos[C1K_ESCAPE].x + 2, gptButtonPos[C1K_ESCAPE].y + 2, 34, 20, IDB_C1_ESCAPE);
 }
 
-// Win: CreateC1Window
-INT C1_OnCreate(HWND hWnd)
+/* Win: CreateC1Window */
+static INT
+C1_OnCreate(
+    _In_ HWND hWnd)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -415,8 +442,11 @@ INT C1_OnCreate(HWND hWnd)
     return 0;
 }
 
-// Win: ShowSKC1Window
-void C1_OnDraw(HDC hDC, HWND hWnd)
+/* Win: ShowSKC1Window */
+static void
+C1_OnDraw(
+    _In_ HDC hDC,
+    _In_ HWND hWnd)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -440,8 +470,11 @@ void C1_OnDraw(HDC hDC, HWND hWnd)
     GlobalUnlock(hGlobal);
 }
 
-// Win: UpdateSKC1Window
-BOOL C1_SetData(HWND hWnd, SOFTKBDDATA *pData)
+/* Win: UpdateSKC1Window */
+static BOOL
+C1_SetData(
+    _In_ HWND hWnd,
+    _In_ const SOFTKBDDATA *pData)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -513,8 +546,12 @@ BOOL C1_SetData(HWND hWnd, SOFTKBDDATA *pData)
     return TRUE;
 }
 
-// Win: SKC1DrawDragBorder
-void C1_DrawDragBorder(HWND hWnd, LPPOINT ppt1, LPPOINT ppt2)
+/* Win: SKC1DrawDragBorder */
+static void
+C1_DrawDragBorder(
+    _In_ HWND hWnd,
+    _In_ LPPOINT ppt1,
+    _Inout_ LPPOINT ppt2)
 {
     HGDIOBJ hGrayBrush = GetStockObject(GRAY_BRUSH);
     INT x, y;
@@ -551,8 +588,10 @@ void C1_DrawDragBorder(HWND hWnd, LPPOINT ppt1, LPPOINT ppt2)
     DeleteDC(hDisplayDC);
 }
 
-// Win: SKC1MousePosition
-INT C1_HitTest(const POINT *ppt)
+/* Win: SKC1MousePosition */
+static INT
+C1_HitTest(
+    _In_ const POINT *ppt)
 {
     INT iKey;
 
@@ -584,8 +623,11 @@ INT C1_HitTest(const POINT *ppt)
     return -1;
 }
 
-// Win: SKC1ButtonDown
-void C1_OnButtonDown(HWND hWnd, PC1WINDOW pC1)
+/* Win: SKC1ButtonDown */
+static void
+C1_OnButtonDown(
+    _In_ HWND hWnd,
+    _Inout_ PC1WINDOW pC1)
 {
     INT iPressedKey;
     HDC hMemDC;
@@ -629,8 +671,11 @@ void C1_OnButtonDown(HWND hWnd, PC1WINDOW pC1)
     pC1->dwFlags |= FLAG_PRESSED;
 }
 
-// Win: SKC1SetCursor
-BOOL C1_OnSetCursor(HWND hWnd, LPARAM lParam)
+/* Win: SKC1SetCursor */
+static BOOL
+C1_OnSetCursor(
+    _In_ HWND hWnd,
+    _In_ LPARAM lParam)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -674,8 +719,12 @@ BOOL C1_OnSetCursor(HWND hWnd, LPARAM lParam)
     return TRUE;
 }
 
-// Win: SKC1MouseMove
-BOOL C1_OnMouseMove(HWND hWnd, WPARAM wParam, LPARAM lParam)
+/* Win: SKC1MouseMove */
+static BOOL
+C1_OnMouseMove(
+    _In_ HWND hWnd,
+    _In_ WPARAM wParam,
+    _In_ LPARAM lParam)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -733,8 +782,12 @@ BOOL C1_OnMouseMove(HWND hWnd, WPARAM wParam, LPARAM lParam)
     return TRUE;
 }
 
-// Win: SKC1ButtonUp
-BOOL C1_OnButtonUp(HWND hWnd, WPARAM wParam, LPARAM lParam)
+/* Win: SKC1ButtonUp */
+static BOOL
+C1_OnButtonUp(
+    _In_ HWND hWnd,
+    _In_ WPARAM wParam,
+    _In_ LPARAM lParam)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -848,8 +901,10 @@ BOOL C1_OnButtonUp(HWND hWnd, WPARAM wParam, LPARAM lParam)
     return ret;
 }
 
-// Win: DestroyC1Window
-void C1_OnDestroy(HWND hWnd)
+/* Win: DestroyC1Window */
+static void
+C1_OnDestroy(
+    _In_ HWND hWnd)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -876,8 +931,12 @@ void C1_OnDestroy(HWND hWnd)
 #endif
 }
 
-// Win: (None)
-LRESULT C1_OnImeControl(HWND hWnd, WPARAM wParam, LPARAM lParam)
+/* Win: (None) */
+static LRESULT
+C1_OnImeControl(
+    _In_ HWND hWnd,
+    _In_ WPARAM wParam,
+    _In_ LPARAM lParam)
 {
     HGLOBAL hGlobal;
     PC1WINDOW pC1;
@@ -952,8 +1011,8 @@ LRESULT C1_OnImeControl(HWND hWnd, WPARAM wParam, LPARAM lParam)
     return ret;
 }
 
-// Win: SKWndProcC1
-LRESULT CALLBACK
+/* Win: SKWndProcC1 */
+static LRESULT CALLBACK
 C1_WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     LRESULT ret = 0;
